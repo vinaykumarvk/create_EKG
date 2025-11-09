@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block content %}
+<section class="card">
+  <h2>Upload document</h2>
+  <p class="muted">Accepted formats: PDF, TXT, Markdown, DOCX, CSV, JSON up to {{ (max_file_bytes // (1024 * 1024)) }} MB.</p>
+  <form method="post" action="/upload" enctype="multipart/form-data" class="stack">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+    <input type="file" name="file" required />
+    <div class="form-actions">
+      <button type="submit" class="primary">Ingest file</button>
+    </div>
+  </form>
+</section>
+
+<section class="card">
+  <h2>Import from Google Drive</h2>
+  {% if drive_enabled %}
+  <p class="muted">Paste a shared folder link. Files larger than 100 MB are skipped.</p>
+  <form id="drive-form" class="stack" data-csrf="{{ csrf_token }}">
+    <label for="folder_link">Folder link</label>
+    <input id="folder_link" name="folder_link" type="url" placeholder="https://drive.google.com/..." required />
+    <div class="form-actions">
+      <button type="submit" class="secondary">List files</button>
+    </div>
+  </form>
+  <div id="drive-files" class="drive-files hidden"></div>
+  {% else %}
+  <p class="muted">Google Drive integration is not configured. Provide service account credentials to enable this feature.</p>
+  {% endif %}
+</section>
+{% endblock %}

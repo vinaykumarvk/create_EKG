@@ -1,0 +1,20 @@
+[project]
+name = "create-ekg"
+version = "0.1.0"
+description = "Admin console for managing an OpenAI vector store"
+requires-python = ">=3.9"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "jinja2",
+    "python-multipart",
+    "openai",
+    "google-api-python-client",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "httpx", "pytest-asyncio"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+addopts = "-q"
