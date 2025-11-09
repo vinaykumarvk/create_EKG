@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block content %}
+<section class="card auth-card">
+  <h2>Admin Sign In</h2>
+  <p class="muted">Use your administrator credentials to access knowledge graph management tools.</p>
+  <form method="post" action="/login" class="stack" autocomplete="off">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+    <label for="username">Username</label>
+    <input id="username" name="username" type="text" required autofocus minlength="3" autocomplete="username" />
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password" required minlength="12" autocomplete="current-password" />
+    <div class="form-actions">
+      <button type="submit" class="primary">Sign in</button>
+    </div>
+  </form>
+  <p class="muted small">All sign-ins are logged. Choose a strong password and never share it.</p>
+</section>
+{% endblock %}
