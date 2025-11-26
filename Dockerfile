@@ -27,7 +27,7 @@ EXPOSE 8080
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
+ENV PORT=8080
 
 # Run the application using startup script (reads PORT from env)
 CMD ["/app/start.sh"]
-
