@@ -76,6 +76,60 @@ input[type='file'] {
   border-radius: 0.75rem;
   color: var(--text);
   padding: 0.75rem 1rem;
+  width: 100%;
+}
+
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrapper input {
+  padding-right: 3rem;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 0.75rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  color: var(--muted);
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.password-toggle:hover {
+  color: var(--text);
+}
+
+.password-toggle .eye-icon {
+  user-select: none;
+}
+
+.form-links {
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+.form-links .link {
+  color: var(--primary);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.form-links .link:hover {
+  text-decoration: underline;
+}
+
+.button.secondary {
+  display: inline-block;
+  text-decoration: none;
+  text-align: center;
 }
 
 button {
@@ -89,6 +143,16 @@ button {
 button.primary {
   background: var(--primary);
   color: white;
+}
+
+button.danger {
+  background: var(--danger);
+  color: white;
+}
+
+button.danger:disabled {
+  background: rgba(255, 107, 107, 0.4);
+  cursor: not-allowed;
 }
 
 button.primary:hover {

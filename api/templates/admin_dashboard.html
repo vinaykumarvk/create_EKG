@@ -1,13 +1,81 @@
 {% extends "layout.html" %}
 {% block content %}
 <section class="card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+    <h2 style="margin: 0;">Account Settings</h2>
+    <a href="/change-password" class="button secondary">Change Password</a>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Vector Stores (Domains)</h2>
+  <p class="muted">Select a vector store (domain) to organize your documents, or create a new one.</p>
+  <div class="stack" style="margin-bottom: 1rem;">
+    <label for="vector-store-select">Select Vector Store:</label>
+    <select id="vector-store-select" name="vector_store_id" style="padding: 0.5rem; border-radius: 4px; background: var(--surface); color: var(--text); border: 1px solid rgba(255,255,255,0.2);">
+      {% if default_vector_store %}
+      <option value="{{ default_vector_store.id }}">{{ default_vector_store.name }} ({{ default_vector_store.file_count }} files) - Default</option>
+      {% else %}
+      <option value="">Default (from settings)</option>
+      {% endif %}
+      {% for store in vector_stores %}
+        {% if not default_vector_store or store.id != default_vector_store.id %}
+        <option value="{{ store.id }}">{{ store.name }} ({{ store.file_count }} files)</option>
+        {% endif %}
+      {% endfor %}
+      <option value="__new__">➕ Create New Vector Store...</option>
+    </select>
+    <button type="button" id="refresh-stores" class="button secondary" style="margin-top: 0.5rem;">Refresh List</button>
+  </div>
+  <div class="stack" id="new-store-section" style="display: none;">
+    <label for="new-store-name">New Vector Store Name (Domain):</label>
+    <div style="display: flex; gap: 0.5rem;">
+      <input type="text" id="new-store-name" placeholder="e.g., Presales, Engineering, Marketing" style="flex: 1; padding: 0.5rem; border-radius: 4px; background: var(--surface); color: var(--text); border: 1px solid rgba(255,255,255,0.2);" />
+      <button type="button" id="create-store" class="button primary">Create</button>
+    </div>
+    <span id="store-status" class="hidden" style="margin-top: 0.5rem; color: var(--muted);"></span>
+  </div>
+  
+  <!-- Files in Vector Store (Collapsible) -->
+  <div id="vector-store-files-section" style="margin-top: 1.5rem; display: none;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+      <h3 style="margin: 0; font-size: 1.1rem;">Files in Selected Vector Store</h3>
+      <button type="button" id="toggle-files" class="button secondary" style="font-size: 0.9rem;">Show Files</button>
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+      <button type="button" id="delete-files" class="button danger" style="font-size: 0.9rem;" disabled>Delete Selected</button>
+      <span id="files-action-status" style="font-size: 0.85rem; color: var(--muted);"></span>
+    </div>
+    <div id="files-list-container" style="display: none; max-height: 400px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 4px; padding: 1rem;">
+      <div id="files-loading" style="text-align: center; padding: 1rem; color: var(--muted);">Loading files...</div>
+      <ul id="files-list" style="list-style: none; padding: 0; margin: 0;"></ul>
+    </div>
+  </div>
+</section>
+
+<section class="card">
   <h2>Upload document</h2>
-  <p class="muted">Accepted formats: PDF, TXT, Markdown, DOCX, CSV, JSON up to {{ (max_file_bytes // (1024 * 1024)) }} MB.</p>
-  <form method="post" action="/upload" enctype="multipart/form-data" class="stack">
+  <p class="muted">Accepted formats: PDF, TXT, Markdown, DOCX, CSV, JSON, XLSX up to {{ (max_file_bytes // (1024 * 1024)) }} MB. XLSX files will be automatically converted to TXT before upload. You can select multiple files at once.</p>
+  <form id="upload-form" method="post" action="/upload" enctype="multipart/form-data" class="stack">
     <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
-    <input type="file" name="file" required />
+    <input type="hidden" name="vector_store_id" id="selected-vector-store-id" value="" />
+    <label for="file-input">Select File(s):</label>
+    <input type="file" name="files" multiple required id="file-input" accept=".pdf,.txt,.md,.docx,.csv,.json,.xlsx" />
+    <div id="selected-files" style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--muted);"></div>
     <div class="form-actions">
-      <button type="submit" class="primary">Ingest file</button>
+      <button type="submit" class="primary" id="upload-button">Upload Files</button>
+    </div>
+    <div id="upload-progress" style="display: none; margin-top: 1rem;">
+      <div style="background: rgba(0,0,0,0.2); border-radius: 4px; padding: 1rem;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+          <span id="upload-status-text">Preparing upload...</span>
+          <span id="upload-progress-percent">0%</span>
+        </div>
+        <div style="background: rgba(255,255,255,0.1); border-radius: 2px; height: 8px; overflow: hidden;">
+          <div id="upload-progress-bar" style="background: var(--primary); height: 100%; width: 0%; transition: width 0.3s;"></div>
+        </div>
+        <div id="upload-file-list" style="margin-top: 1rem; font-size: 0.85rem;"></div>
+      </div>
     </div>
   </form>
 </section>

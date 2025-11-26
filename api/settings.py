@@ -7,6 +7,13 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Optional
 
+# Load environment variables from .env file
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass  # dotenv is optional
+
 
 @dataclass
 class Settings:
