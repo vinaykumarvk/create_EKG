@@ -21,10 +21,6 @@ steps:
       - '--platform'
       - 'managed'
       - '--allow-unauthenticated'
-      - '--port'
-      - '8000'
-      - '--set-env-vars'
-      - 'PORT=8000'
 
 images:
   - 'gcr.io/$PROJECT_ID/create-ekg:$SHORT_SHA'
